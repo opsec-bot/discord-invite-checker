@@ -1,0 +1,6 @@
+put invite codes here on a new line everytime example: 
+
+a
+b
+c
+-------------------------------------------------------
