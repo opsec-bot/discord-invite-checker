@@ -5,5 +5,5 @@ This uses golang to check discord invites in mass.
 [+] = not taken
 
 proxy formatt is 
-http://NAME:PASS@IP:PORT
+`http://NAME:PASS@IP:PORT`
 
