@@ -13,13 +13,25 @@ import (
 )
 
 const (
-	File  = "file.txt"
-	Api   = "https://discordapp.com/api/invite/"
-	Proxy = ""
+	InFile  = "in.txt"
+	OutFile = "out.txt"
+	Api     = "https://discordapp.com/api/invite/"
+	Proxy   = ""
 )
 
 func main() {
-	file, err := os.Open(File)
+	if _, err := os.Stat(OutFile); os.IsNotExist(err) {
+		_, err := os.Create(OutFile)
+		if err != nil {
+			return
+		}
+	}
+	err := ioutil.WriteFile(OutFile, []byte(""), 0644)
+	if err != nil {
+		return
+	}
+
+	file, err := os.Open(InFile)
 	if err != nil {
 		return
 
@@ -54,10 +66,22 @@ func main() {
 
 			}
 			if strings.Contains(string(body), "Unknown Invite") {
-				color.Green("[+] %s", invite)
+				color.Green("[+] %s > Unclaimed!", invite)
+
+				f, err := os.OpenFile(OutFile, os.O_APPEND|os.O_WRONLY, 0600)
+				if err != nil {
+					panic(err)
+				}
+
+				defer f.Close()
+
+				if _, err = f.WriteString(invite + "\n"); err != nil {
+					panic(err)
+				}
+			} else {
+				color.Red("[-] %s > Claimed!", invite)
 				return
 			}
-			color.Red("[-] %s", invite)
 		}()
 	}
 	wg.Wait()
